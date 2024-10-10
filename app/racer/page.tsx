@@ -4,21 +4,21 @@ import { useState, useRef, useEffect } from "react";
 
 export default function Home() {
   // Random passages
-  const passages = [
+  const passages: string[] = [
     "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.",
     "Enim mollis dui morbi augue parturient sapien dictumst pretium. Conubia justo habitant luctus tellus lacus duis.",
     "Tellus non pellentesque elementum porta ligula montes mauris. Nunc per blandit condimentum hac curae mi suscipit.",
   ];
 
-  // State variables
-  const [inputValue, setInputValue] = useState('');
-  const [randomPassage, setRandomPassage] = useState('');
-  const [seconds, setSeconds] = useState(0);
-  const [started, setStarted] = useState(false);
-  const [inputAndText, setInputAndText] = useState(true);
-  const [showWPM, setShowWPM] = useState(false); // To display WPM in full screen
-  const textareaRef = useRef(null);
-  const intervalRef = useRef(null); // Store interval ID
+  // State variables with types
+  const [inputValue, setInputValue] = useState<string>('');
+  const [randomPassage, setRandomPassage] = useState<string>('');
+  const [seconds, setSeconds] = useState<number>(0);
+  const [started, setStarted] = useState<boolean>(false);
+  const [inputAndText, setInputAndText] = useState<boolean>(true);
+  const [showWPM, setShowWPM] = useState<boolean>(false);
+  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null); // Store interval ID
 
   // Select random passage when the component mounts
   useEffect(() => {
@@ -27,8 +27,8 @@ export default function Home() {
   }, []);
 
   // Handle input change
-  const handleChange = (event) => {
-    const newValue = event.target.value; // Store the updated input value
+  const handleChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newValue = event.target.value;
     setInputValue(newValue);
     autoResize();
 
@@ -36,7 +36,6 @@ export default function Home() {
       setStarted(true);
     }
 
-    // Compare input with the passage
     const lengthOfInput = newValue.length;
     const partOfPassage = randomPassage.slice(0, lengthOfInput);
 
@@ -45,8 +44,8 @@ export default function Home() {
     } else if (randomPassage === newValue) {
       setInputAndText(true);
       setStarted(false);
-      setShowWPM(true); // Show WPM when passage is completed
-      clearInterval(intervalRef.current); // Stop the timer
+      setShowWPM(true);
+      if (intervalRef.current) clearInterval(intervalRef.current); // Stop the timer
     }
   };
 
@@ -57,7 +56,9 @@ export default function Home() {
         setSeconds((prevSeconds) => prevSeconds + 1);
       }, 1000);
     }
-    return () => clearInterval(intervalRef.current); // Cleanup interval on unmount or when `started` changes
+    return () => {
+      if (intervalRef.current) clearInterval(intervalRef.current); // Cleanup on unmount or when `started` changes
+    };
   }, [started]);
 
   // Auto-resize the textarea
@@ -69,7 +70,7 @@ export default function Home() {
   };
 
   // Format time as mm:ss
-  const formatTime = (timeInSeconds) => {
+  const formatTime = (timeInSeconds: number) => {
     const minutes = Math.floor(timeInSeconds / 60);
     const seconds = timeInSeconds % 60;
     return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
@@ -89,12 +90,12 @@ export default function Home() {
     setShowWPM(false);
     setStarted(false);
     setInputAndText(true);
-    const randomNumber = Math.floor(Math.random() * passages.length); // Select a new random passage
+    const randomNumber = Math.floor(Math.random() * passages.length);
     setRandomPassage(passages[randomNumber]);
   };
 
   // Prevent copy, paste, and cut actions
-  const preventCopyPaste = (event) => {
+  const preventCopyPaste = (event: React.ClipboardEvent<HTMLTextAreaElement>) => {
     event.preventDefault();
   };
 
@@ -103,7 +104,6 @@ export default function Home() {
 
   return (
     <div className="flex flex-col justify-center items-center my-10">
-      {/* Full-screen WPM display when passage matches */}
       {showWPM && (
         <div className="fixed inset-0 bg-black bg-opacity-75 flex flex-col justify-center items-center z-50">
           <div className="text-white text-6xl mb-6">
@@ -126,15 +126,14 @@ export default function Home() {
           ref={textareaRef}
           value={inputValue}
           onChange={handleChange}
-          onCopy={preventCopyPaste} // Prevent copy
-          onPaste={preventCopyPaste} // Prevent paste
-          onCut={preventCopyPaste}   // Prevent cut
-          disabled={showWPM} // Disable textarea if WPM is shown
+          onCopy={preventCopyPaste}
+          onPaste={preventCopyPaste}
+          onCut={preventCopyPaste}
+          disabled={showWPM}
           className={`w-full min-h-[30px] max-h-[150px] overflow-hidden resize-none p-2 border rounded shadow-lg px-3 py-4 ${condition}`}
           style={{ height: "auto" }}
         />
         <div className="w-1/2 mt-4">
-          {/* Display the stopwatch */}
           <p className="text-xl">Time: {formatTime(seconds)}</p>
         </div>
       </div>
