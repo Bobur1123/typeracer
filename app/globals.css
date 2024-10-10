@@ -1,0 +1,72 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+.title {
+  font-family: "Roboto", sans-serif;
+  font-weight: 500;
+  font-size: 2em;
+}
+
+@keyframes moveCar {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+    -webkit-transform: translateX(0);
+    -moz-transform: translateX(0);
+    -ms-transform: translateX(0);
+    -o-transform: translateX(0);
+  }
+  50% {
+    transform: translateX(50vw);
+    opacity: 1;
+    -webkit-transform: translateX(50vw);
+    -moz-transform: translateX(50vw);
+    -ms-transform: translateX(50vw);
+    -o-transform: translateX(50vw);
+  }
+  100% {
+    transform: translateX(90vw);
+    opacity: 0;  /* Fades out */
+    -webkit-transform: translateX(90vw);
+    -moz-transform: translateX(90vw);
+    -ms-transform: translateX(90vw);
+    -o-transform: translateX(90vw);
+  }
+}
+
+.car {
+  position: absolute;
+  top: 150px;
+  left: 10px;
+  animation: moveCar 3s linear forwards; /* Added 'forwards' */
+  -webkit-animation: moveCar 3s linear forwards; /* Added 'forwards' */
+}
+.button {
+  top: 500px;
+  
+}
+
